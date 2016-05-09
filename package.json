@@ -26,7 +26,8 @@
     "grunt-bower-task": "~0.4.0",
     "grunt-bower-update": "~0.1.2",
     "sails-mongo": "~0.12.0",
-    "kerberos": "~0.0.21"
+    "kerberos": "~0.0.21",
+    "grunt-sass": "~1.2.0"
   },
   "scripts": {
     "debug": "node debug app.js",
