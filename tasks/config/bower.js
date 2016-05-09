@@ -20,8 +20,17 @@ module.exports = function(grunt) {
 				cleanBowerDir: true,
 				bowerOptions: {}
 			}
+		},
+		
+		'bower-update': {
+		   options: {
+		    	pickAll: true,
+		    	forceLatest: true,
+		    	rangeChar: '~'
+		   }
 		}
 	});
 
 	grunt.loadNpmTasks('grunt-bower-task');
+	grunt.loadNpmTasks('grunt-bower-update');
 };
