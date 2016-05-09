@@ -1,0 +1,19 @@
+{
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.2.3",
+    "requirejs": "~2.2.0",
+    "angular": "~1.5.5",
+    "angular-material": "~1.1.0"
+  },
+  "name": "Mean-Sails-Stack",
+  "version": "0.0.1",
+  "author": "KazeiDesign - Loïk Maniquant",
+  "private": true
+}
