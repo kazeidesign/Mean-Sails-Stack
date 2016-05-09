@@ -2,6 +2,7 @@
 
 MEAN stack with Sails.js = <a href="https://www.mongodb.com/" target="_blank">MongoDB</a>, <a href="http://sailsjs.org" target="_blank">Sails.js(Express.js)</a>, <a href="https://angularjs.org/" target="_blank">Angular.js 1.5+</a> and <a href="https://nodejs.org/en/" target="_blank">Node.js</a>.
 
+### Under development
 <!--
 ## Ready to use
 
