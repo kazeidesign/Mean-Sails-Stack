@@ -2,13 +2,13 @@
 
 MEAN stack with Sails.js = <a href="https://www.mongodb.com/" target="_blank">MongoDB</a>, <a href="http://sailsjs.org" target="_blank">Sails.js(Express.js)</a>, <a href="https://angularjs.org/" target="_blank">Angular.js 1.5+</a> and <a href="https://nodejs.org/en/" target="_blank">Node.js</a>.
 
-### Under development
-<!--
 ## Ready to use
 
-This app is ready to use. Clone this repository ``` git clone https://github.com/kazeidesign/Sails-Angular-1.git ``` in your server.
+This app is ready to use. Clone this repository ``` git clone https://github.com/kazeidesign/Mean-Sails-Stack.git ``` in your server.
 
-Run `` cd Sails-Angular-1/ && npm install && sails lift ``.
+Run `` cd Mean-Sails-Stack/ && npm install && sails lift ``.
+
+/!\ At the first `` sails lift ``, wait less than one minute for the automatical bower install.
 
 Look in your browser at [localhost:1337](http://localhost:1337). Your Sails.js app is ready and you can use Angular.js.
 
@@ -16,86 +16,85 @@ Look in your browser at [localhost:1337](http://localhost:1337). Your Sails.js a
 
 #### Needed
 
-[Node.js](https://nodejs.org/en/): version 4.4.4 LTS or more
+[Node.js](https://nodejs.org/en/): version 4.4.4 LTS or later
 
-[Sails.js](http://sailsjs.org): version 0.12.3 or more
+[Sails.js](http://sailsjs.org): version 0.12.3 or later
 
-[Grunt-sass](https://www.npmjs.com/package/grunt-sass): SASS compiler 
+<a href="https://www.mongodb.com/" target="_blank">MongoDB</a>: version 2.4.0 or later
 
-Compile Sass to CSS using node-sass. This task uses libsass, which is a Sass compiler in C++. It's a lot faster than the original Ruby compiler and fully compatible.
+<a href="https://angularjs.org/" target="_blank">Angular.js</a>: version 1.5.5 or later
 
-To install Grunt-sass, use in terminal:
+[Grunt-sass](https://www.npmjs.com/package/grunt-sass): version 1.2.0 or later
 
-`npm install --save-dev grunt-sass`
+[Angular-Sails](https://github.com/janpantel/angular-sails): version 1.1.4 or later (/!\ Doesn't work with 2.0.0 Beta version)
 
-or in your **package.json**:
+[Angular-Material](https://github.com/angular/material): version 1.1.0 or later
 
-`"grunt-sass": "~1.2.0"`
+[Html5-boilerplate](https://github.com/h5bp/html5-boilerplate): version 5.3.0 or later
 
 ---
 
-#### Create SASS task
+#### CRUD between AngularJS and SailsJS
 
-To use it, you need to create a new Grunt task in **tasks/config/**. Create a new file `sass.js`:
+```javascript
+var app = angular.module("MyApp", ['ngSails']);
 
-```js
-module.exports = function(grunt) {                  // Create new Grunt task
+//OPTIONAL! Set socket URL!
+app.config(['$sailsProvider', function ($sailsProvider) {
+    $sailsProvider.url = 'http://foo.bar';
+}]);
 
-  grunt.config.set('sass', {                        // Task sass
-    dev: {
-      files: [{
-        expand: true,                               // 'expand directory'
-        cwd: 'assets/styles/',                      // 'source folder'
-        src: ['importer.scss', 'importer.sass'],    // 'source files'
-        dest: '.tmp/public/styles/',                // 'destination folder'
-        ext: '.css'                                 // 'extension of compiled file'
-      }]
-    }
-  });
+app.controller("FooController", function ($scope, $sails) {
+  $scope.bars = [];
 
-  grunt.loadNpmTasks('grunt-sass');                 // Load task Grunt-sass  
-};
+  (function () {
+    // Using .success() and .error()
+    $sails.get("/bars")
+      .success(function (data, status, headers, jwr) {
+        $scope.bars = data;
+      })
+      .error(function (data, status, headers, jwr) {
+        alert('Houston, we got a problem!');
+      });
 
+    // Using .then()
+    $sails.get("/bars")
+      .then(function(resp){
+          $scope.bars = resp.data;
+      }, function(resp){
+        alert('Houston, we got a problem!');
+      });
+
+    // Watching for updates
+    var barsHandler = $sails.on("bars", function (message) {
+      if (message.verb === "created") {
+        $scope.bars.push(message.data);
+      }
+    });
+    
+    // Stop watching for updates
+    $scope.$on('$destroy', function() {
+      $sails.off('bars', barsHandler);
+    });
+    
+  }());
+});
 ```
 
 ---
 
+### Example
 
-#### Add extension .scss and .sass in the tasks config
+ Under development
 
-Add ` |scss|sass ` after `less` into two files in **tasks/config/**:
-1. `copy.js`
-2. `sync.js`
+API Reference
+--------------
 
-```js
-src: ['**/*.!(coffee|less|scss|sass)'],     // Add |scss|sass after less
-```
+### Sails.JS REST ###
+Angular Sails wraps the native sails.js REST functions. For further information check out [the sails docs](http://sailsjs.org/#!documentation/sockets) and [Mike's Screencast](http://www.youtube.com/watch?v=GK-tFvpIR7c)
 
----
-
-
-#### Add the task sass in the register
-
-Add ` 'sass:dev,' ` after ` 'less:dev,' ` into two files in **tasks/register/**:
-1. `compileAssets.js`
-2. `syncAssets.js`
-
-```js
-'sass:dev',     // Add 'sass:dev,' after 'less:dev,' 
-```
-
----
-
-
-#### Use it
-
-In your terminal, launch `sails lift` and start to write your [Syntactically Awesome Style Sheets](http://sass-lang.com/).
-
-You can use three format: 
-* .scss
-* .sass
-* .less (Less is still enable and use `grunt-contrib-less` to compile)
-
+### Native socket functions ###
+The sails service is nothing more like the native socket.io object!
 
 Enjoy!
 
@@ -105,8 +104,10 @@ Enjoy!
 
 #### To do
 
+* To do example
+* Post example
+* Front office & Back office example
 * [grunt-scss-lint](https://github.com/ahmednuaman/grunt-scss-lint)
 * [grunt-sass-lint](https://github.com/sasstools/grunt-sass-lint)
 * [grunt-postcss](https://github.com/nDmitry/grunt-postcss)
 
--->
