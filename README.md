@@ -37,85 +37,96 @@ Look in your browser at [localhost:1337](http://localhost:1337). Your Sails.js a
 #### CRUD between AngularJS and SailsJS
 
 ```javascript
-var app = angular.module("MyApp", ['sailsResource']);
+angular.module('myApp.view1', ['ngRoute', 'sailsResource'])
 
-.controller('HomeController', function ($rootScope, sailsResource) {
+.config(['$routeProvider', function($routeProvider) {
+  $routeProvider
+  .when('/view1', {
+    templateUrl: 'view1/view1.html',
+    controller: 'View1Ctrl as task'
+  });
+}])
+
+.controller('View1Ctrl', function ($rootScope, sailsResource) {
   var self = this;
-  var simple = sailsResource('Simple', {
-    nocache: {method: 'GET', isArray: true, cache: false},
-    count: {method: 'GET', url: '/simple/count'},
-    notFound: {method: 'GET', url: '/whoa/there'}
-  });
-
-  this.simpleResource = simple;
-  this.created = 0;
-  this.updated = 0;
-  this.destroyed = 0;
-  this.simpleForm = new simple();
-  this.simpleTypes = simple.query(function () {
-    self.refreshServerCount();
-  });
-  simple.nocache(function (startingTypes) {
-    self.startingCount = startingTypes.length;
-  });
+  var item = sailsResource('Item');
+  
+  this.itemResource = item;
+  this.itemForm = new item();
+  this.itemTypes = item.query();
 
   this.add = function () {
-    self.simpleForm.$save(function (newItem) {
-      self.simpleTypes.push(newItem);
-      self.refreshServerCount();
+    self.itemForm.$save(function (newItem) {
+      self.itemTypes.push(newItem);
     });
-    self.simpleForm = new simple();
+    self.itemForm = new item();
   };
   this.refreshServerCount = function () {
     // Tests the custom URL functionality
-    self.serverCount = simple.count();
+    self.serverCount = item.count();
   };
 
   this.cancel = function () {
-    self.simpleForm = new simple();
+    self.itemForm = new item();
   };
-  this.deleteSimple = function (simple) {
-    simple.$delete(function () {
-      self.refreshServerCount();
-    });
+  
+  this.deleteItem = function (item) {
+    item.$delete();
   };
-  this.editSimple = function (simple) {
-    simple.$editing = true;
+  
+  this.editItem = function (item) {
+    item.$editing = true;
   };
-  this.saveSimple = function (simple) {
-    simple.$save();
-    simple.$editing = false;
+  
+  this.saveItem = function (item) {
+    item.$save();
+    item.$editing = false;
   };
-  this.findByEmail = function () {
-    self.foundSimple = simple.get({email: self.searchEmail});
-    self.searchEmail = '';
+  
+  this.checkItemCompleted = function (item){
+    item.status = "completed";
+    item.$save();
   };
-  this.causeError = function () {
-    simple.notFound(
+  
+  this.checkItemToDo = function (item){
+    item.status = "To do";
+    item.$save();
+  };
+  
+  this.causeError = function () { 
+    item.notFound(
       function (response) {
       },
       function (response) {
         self.error = response.statusCode;
       });
   };
-
+  
   $rootScope.$on('$sailsResourceCreated', function () {
     self.created++;
   });
+  
   $rootScope.$on('$sailsResourceUpdated', function () {
     self.updated++;
   });
+  
   $rootScope.$on('$sailsResourceDestroyed', function () {
     self.destroyed++;
   });
-});
+})
 ```
 
 ---
 
 ### Example
 
- Under development
+ #### To do 
+ 
+<a href="http://kazeidesign.github.io/Means-To-Do/" target="_blank"><img src="https://raw.githubusercontent.com/kazeidesign/Means-To-Do/gh-pages/images/Means-To-Do-screenshot.png" alt=""><br><br>
+Means-To-Do: http://kazeidesign.github.io/Means-To-Do/
+</a>
+
+
 
 API Reference
 --------------
@@ -136,8 +147,7 @@ Enjoy!
 
 * Doc
 * To do example
-* Post example
-* Front office & Back office example
+* CMS example
 * [grunt-scss-lint](https://github.com/ahmednuaman/grunt-scss-lint)
 * [grunt-sass-lint](https://github.com/sasstools/grunt-sass-lint)
 * [grunt-postcss](https://github.com/nDmitry/grunt-postcss)
