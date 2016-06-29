@@ -61,10 +61,6 @@ angular.module('myApp.view1', ['ngRoute', 'sailsResource'])
     });
     self.itemForm = new item();
   };
-  this.refreshServerCount = function () {
-    // Tests the custom URL functionality
-    self.serverCount = item.count();
-  };
 
   this.cancel = function () {
     self.itemForm = new item();
